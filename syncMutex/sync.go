@@ -27,7 +27,7 @@ func withoutLock() {
 }
 
 // With Lock
-func depositWithLock(amount int, wg *sync.WaitGroup, lock *sync.Mutex) {
+func depositWithLock(amount int, wg *sync.WaitGroup, lock *sync.RWMutex) {
 	defer wg.Done()
 	lock.Lock()
 	b := BALANCE
@@ -36,13 +36,20 @@ func depositWithLock(amount int, wg *sync.WaitGroup, lock *sync.Mutex) {
 }
 func withLock() {
 	var wg sync.WaitGroup
-	var lock sync.Mutex
+	var lock sync.RWMutex
 	for i := 1; i <= 5000; i++ {
 		wg.Add(1)
 		go depositWithLock(i*100, &wg, &lock)
 	}
 	wg.Wait()
-	fmt.Println(BALANCE)
+	fmt.Println(Balance(&lock))
+}
+
+func Balance(lock *sync.RWMutex) int {
+	lock.Lock()
+	b := BALANCE
+	lock.Unlock()
+	return b
 }
 
 func main() {
@@ -53,6 +60,7 @@ func main() {
 		withoutLock()
 		BALANCE = 100
 	}
+
 	fmt.Println("Results with lock")
 	// If we check the output, the values doesn't change anymore
 	// Also if we check the binary file withLock.exe, we haven't a warning
