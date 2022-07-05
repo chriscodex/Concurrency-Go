@@ -47,7 +47,7 @@ func withLock() {
 
 func main() {
 	// Results differents if we dont lock
-	// If we check the the binary file, we have a warning
+	// If we check the the binary file withoutLock.exe, we have a warning
 	fmt.Println("Results without lock")
 	for i := 0; i < 5; i++ {
 		withoutLock()
@@ -55,6 +55,7 @@ func main() {
 	}
 	fmt.Println("Results with lock")
 	// If we check the output, the values doesn't change anymore
+	// Also if we check the binary file withLock.exe, we haven't a warning
 	for i := 0; i < 5; i++ {
 		withLock()
 		BALANCE = 100
